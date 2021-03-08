@@ -7,6 +7,6 @@
     "watch": [
       "src"
     ],
-    "exec": "yarn build && node build/index.js",
+    "exec": "yarn build && node -r dotenv-flow/config build/index.js --node-env=development",
     "ext": "ts"
 }

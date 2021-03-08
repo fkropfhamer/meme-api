@@ -2,6 +2,7 @@ import Router from 'koa-router';
 import User from '../models/user';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '../util/constants';
 const router = new Router({ prefix: '/user' });
 
 router.get('/', async ctx => {
@@ -53,7 +54,7 @@ router.post('/authenticate', async ctx => {
 
   if (user) {
     if (await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign({ username: user.username, _id: username.id }, 'shared-secret', { expiresIn: '7d' });
+      const token = jwt.sign({ username: user.username, _id: username.id }, JWT_SECRET, { expiresIn: '7d' });
 
       ctx.body = {
         token,
