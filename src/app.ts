@@ -5,11 +5,11 @@ import Logger from 'koa-logger';
 const app = new Koa();
 const router = new Router();
 
-router.get('/', async (ctx) => {
-    ctx.body = {
-        msg: 'Hello World!',
-        status: true
-    }
+router.get('/', async ctx => {
+  ctx.body = {
+    msg: 'Hello World!',
+    status: true
+  };
 });
 
 app.use(Logger());
