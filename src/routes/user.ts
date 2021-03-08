@@ -1,6 +1,7 @@
 import Router from 'koa-router';
 import User from '../models/user';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 const router = new Router({ prefix: '/user' });
 
 router.get('/', async ctx => {
@@ -38,6 +39,39 @@ router.put('/', async ctx => {
     }
 
     ctx.throw(500);
+  }
+});
+
+router.post('/authenticate', async ctx => {
+  const { username, password } = ctx.request.body;
+
+  if (!username || !password) {
+    ctx.throw(400, 'invalid arguments');
+  }
+
+  const user = await User.findOne({ username });
+
+  if (user) {
+    if (await bcrypt.compare(password, user.password)) {
+      const token = jwt.sign({ username: user.username, _id: username.id }, 'shared-secret', { expiresIn: '7d' });
+
+      ctx.body = {
+        token,
+        status: true
+      };
+    } else {
+      ctx.throw(401, 'wrong password');
+    }
+  } else {
+    ctx.throw(404, 'user not found');
+  }
+});
+
+router.get('/authentication-check', async ctx => {
+  if (ctx.state.user) {
+    ctx.body = { status: true };
+  } else {
+    ctx.throw(401, ctx.state.jwtOriginalError);
   }
 });
 
