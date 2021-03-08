@@ -1,5 +1,8 @@
 import app from './app';
+import { connectDb } from './db';
 
-app.listen(8080, () => {
-  console.log('Server running on port 8080');
+connectDb().then(async() => {
+  app.listen(8080, () => {
+    console.log('Server running on port 8080');
+  });
 });
