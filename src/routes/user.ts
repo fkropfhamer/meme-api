@@ -1,5 +1,6 @@
 import Router from 'koa-router';
 import User from '../models/user';
+import bcrypt from 'bcrypt';
 const router = new Router({ prefix: '/user' });
 
 router.get('/', async ctx => {
@@ -20,13 +21,15 @@ router.put('/', async ctx => {
     ctx.throw(400, 'invalid arguments');
   }
 
-  const user = {
+  const passwordHash = await bcrypt.hash(password, 8);
+
+  const user = new User({
     username,
-    password
-  };
+    password: passwordHash
+  });
 
   try {
-    await User.create(user);
+    await user.save();
 
     ctx.body = { status: true };
   } catch (err) {
